@@ -55,7 +55,7 @@ resource "aws_subnet" "pro_public_subnet" {
     vpc_id = aws_vpc.pro_vpc.id
     cidr_block = var.public_cidr[count.index]
     map_public_ip_on_launch = true
-    availability_zone = data.aws_availability_zone.available.name[count.index]
+    availability_zone = data.aws_availability_zone.available.names[count.index]
 
     tags = {
         Name = "pro_public_${random_id.random.dec}-${count.index + 1}"
@@ -66,7 +66,7 @@ resource "aws_subnet" "pro_private_subnet" {
     count = length(var.private_cidr)
     vpc_id = aws_vpc.pro_vpc.id
     cidr_block = var.public_cidr[count.index]
-    availability_zone = data.aws_availability_zones.available.name[count.index]
+    availability_zone = data.aws_availability_zones.available.names[count.index]
 
     tags = {
         Name = "pro_private_${random_id.random.dec}-${count.index + 1}"
