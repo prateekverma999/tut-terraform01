@@ -4,10 +4,10 @@ resource "random_id" "random" {
 
 resource "aws_vpc" "pro_vpc"{
     cidr_block = var.vpc_cidr
-    enable_dns_hostname = true
+    enable_dns_hostnames = true
     enable_dns_support = true
 
-    tag = {
+    tags = {
         Name = "pro_vpc-${random_id.random.dec}"
     }
 
@@ -19,7 +19,7 @@ resource "aws_vpc" "pro_vpc"{
 resource "aws_internet_gateway" "pro_igw"{
     vpc_id = aws_vpc.pro_vpc.id
 
-    tag = {
+    tags = {
         Name = "pro_igw-${random_id.random.dec}"
     }
 }
@@ -27,7 +27,7 @@ resource "aws_internet_gateway" "pro_igw"{
 resource "aws_route_table" "pro_public_rt" {
     vpc_id = aws_vpc.pro_vpc.id
 
-    tag = {
+    tags = {
         Name = "pro_public"
     }
 }
@@ -35,7 +35,7 @@ resource "aws_route_table" "pro_public_rt" {
 resource "aws_default_route_table" "pro_private_rt" {
     default_route_table_id = aws_vpc.pro_vpc.default_route_table_id
 
-    tag = {
+    tags = {
         Name = "pro_private"
     }
 }
@@ -53,7 +53,7 @@ resource "aws_subnet" "pro_public_subnet" {
     map_public_ip_on_launch = true
     availability_zone = data.availability_zone.available.name[count.index]
 
-    tag = {
+    tags = {
         Name = "pro_public_${random_id.random.dec}-${count.index + 1}"
     }
 }
@@ -64,7 +64,7 @@ resource "aws_subnet" "pro_private_subnet" {
     cidr_block = var.public_cidr[count.index]
     availability_zone = data.availability_zone.available.name[count.index]
 
-    tag = {
+    tags = {
         Name = "pro_private_${random_id.random.dec}-${count.index + 1}"
     }
 }
