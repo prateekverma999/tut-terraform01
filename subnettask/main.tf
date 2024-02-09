@@ -62,7 +62,7 @@ resource "aws_subnet" "pro_private_subnet" {
     count = length(var.private_cidr)
     vpc_id = aws_vpc.pro_vpc.id
     cidr_block = var.public_cidr[count.index]
-    availability_zone = data.availability_zone.available.name[count.index]
+    availability_zone = data.availability_zones.available.name[count.index]
 
     tags = {
         Name = "pro_private_${random_id.random.dec}-${count.index + 1}"
