@@ -2,6 +2,10 @@ resource "random_id" "random" {
     byte_length = 2
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 resource "aws_vpc" "pro_vpc"{
     cidr_block = var.vpc_cidr
     enable_dns_hostnames = true
