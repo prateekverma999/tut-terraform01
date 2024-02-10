@@ -1,0 +1,3 @@
+# add .terraform/ to ignore
+.terraform
+.terraform/
