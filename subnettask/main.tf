@@ -1,3 +1,8 @@
+locals {
+  azs = data.aws_availability_zones.available.names
+}
+
+
 resource "random_id" "random" {
     byte_length = 2
 }
@@ -51,11 +56,11 @@ resource "aws_route" "pro_default_route" {
 }
 
 resource "aws_subnet" "pro_public_subnet" {
-    count = length(var.public_cidr)
+    count = length(local.azs)
     vpc_id = aws_vpc.pro_vpc.id
-    cidr_block = var.public_cidr[count.index]
+    cidr_block = cidrsubnet(var.vpc_id, 8, length(local.azs))
     map_public_ip_on_launch = true
-    availability_zone = data.aws_availability_zones.available.names[count.index]
+    availability_zone = local.azs[count.index]
 
     tags = {
         Name = "pro_public_${random_id.random.dec}-${count.index + 1}"
@@ -63,10 +68,10 @@ resource "aws_subnet" "pro_public_subnet" {
 }
 
 resource "aws_subnet" "pro_private_subnet" {
-    count = length(var.private_cidr)
+    count = length(local.azs)
     vpc_id = aws_vpc.pro_vpc.id
-    cidr_block = var.private_cidr[count.index]
-    availability_zone = data.aws_availability_zones.available.names[count.index]
+    cidr_block = cidrsubnet(var.vpc_id, 8, length(local.azs) + 1)
+    availability_zone = local.azs[count.index]
 
     tags = {
         Name = "pro_private_${random_id.random.dec}-${count.index + 1}"
