@@ -58,7 +58,7 @@ resource "aws_route" "pro_default_route" {
 resource "aws_subnet" "pro_public_subnet" {
     count = length(local.azs)
     vpc_id = aws_vpc.pro_vpc.id
-    cidr_block = cidrsubnet(var.vpc_id, 8, length(local.azs))
+    cidr_block = cidrsubnet(var.vpc_cidr, 8, length(local.azs))
     map_public_ip_on_launch = true
     availability_zone = local.azs[count.index]
 
@@ -70,7 +70,7 @@ resource "aws_subnet" "pro_public_subnet" {
 resource "aws_subnet" "pro_private_subnet" {
     count = length(local.azs)
     vpc_id = aws_vpc.pro_vpc.id
-    cidr_block = cidrsubnet(var.vpc_id, 8, length(local.azs) + 1)
+    cidr_block = cidrsubnet(var.vpc_cidr, 8, length(local.azs) + 1)
     availability_zone = local.azs[count.index]
 
     tags = {
