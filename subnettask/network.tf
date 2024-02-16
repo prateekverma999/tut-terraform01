@@ -7,6 +7,15 @@ resource "random_id" "random" {
     byte_length = 2
 }
 
+resource "aws_s3_bucket" "pro_s3" {
+    count = 2
+    bucket = "${var.bucket}-${count.index}"
+
+    tags = {
+        Name = "My bucket-${count.index}/${random_id.random.dec+"123"}"
+    }
+}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -58,7 +67,7 @@ resource "aws_route" "pro_default_route" {
 resource "aws_subnet" "pro_public_subnet" {
     count = length(local.azs)
     vpc_id = aws_vpc.pro_vpc.id
-    cidr_block = cidrsubnet(var.vpc_cidr, 8, length(local.azs))
+    cidr_block = cidrsubnet(var.vpc_cidr, 8, count.index)
     map_public_ip_on_launch = true
     availability_zone = local.azs[count.index]
 
@@ -70,10 +79,16 @@ resource "aws_subnet" "pro_public_subnet" {
 resource "aws_subnet" "pro_private_subnet" {
     count = length(local.azs)
     vpc_id = aws_vpc.pro_vpc.id
-    cidr_block = cidrsubnet(var.vpc_cidr, 8, length(local.azs) + 1)
+    cidr_block = cidrsubnet(var.vpc_cidr, 8, length(local.azs) + (count.index))
     availability_zone = local.azs[count.index]
 
     tags = {
-        Name = "pro_private_${random_id.random.dec}-${count.index + 1}"
+        Name = "pro_private_${random_id.random.dec}-${count.index + 1 + length(local.azs)}"
     }
+}
+
+resource "aws_route_table_association" "pro-public-rt_assosiation" {
+  count = length(local.azs)
+  route_table_id = aws_route_table.pro_public_rt.id
+  subnet_id = aws_subnet.pro_public_subnet[count.index].id
 }
