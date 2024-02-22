@@ -50,18 +50,18 @@ resource "aws_route_table" "pro_public_rt" {
     }
 }
 
+resource "aws_route" "pro_default_route" {
+    route_table_id = aws_route_table.pro_public_rt.id
+    destination_cidr_block = var.dest_cidr
+    gateway_id = aws_internet_gateway.pro_igw.id
+}
+
 resource "aws_default_route_table" "pro_private_rt" {
     default_route_table_id = aws_vpc.pro_vpc.default_route_table_id
 
     tags = {
         Name = "pro_private"
     }
-}
-
-resource "aws_route" "pro_default_route" {
-    route_table_id = aws_route_table.pro_public_rt.id
-    destination_cidr_block = var.dest_cidr
-    gateway_id = aws_internet_gateway.pro_igw.id
 }
 
 resource "aws_subnet" "pro_public_subnet" {
